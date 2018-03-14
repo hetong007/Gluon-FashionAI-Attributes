@@ -190,7 +190,7 @@ def train(task, task_num_class):
     # Start Training
     for epoch in range(epochs):
         if (epoch+1) % 10 == 0:
-            trainer.set_learning_rate(trainer.learning_rate()*0.5)
+            trainer.set_learning_rate(trainer.learning_rate*0.75)
         tic = time.time()
         train_loss = 0
         num_batch = len(train_data)
