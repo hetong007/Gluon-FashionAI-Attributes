@@ -27,8 +27,6 @@ num_gpu = 4
 ctx = [mx.gpu(i) for i in range(num_gpu)]
 batch_size = batch_size*num_gpu
 
-pretrained_net = models.resnet50_v2(pretrained=True)
-
 logging.basicConfig(level=logging.INFO,
                     handlers = [
                         logging.StreamHandler(),
@@ -153,9 +151,12 @@ def test_tencrop(net, val_data, ctx):
     _, val_acc = metric.get()
     return ((val_acc, AP / AP_cnt))
 
-def train(pretrained_net, task, task_num_class):
+def train(task, task_num_class):
     logging.info('Start Training for Task: %s\n' % (task))
+
     # Initialize the net with pretrained model
+    pretrained_net = models.resnet50_v2(pretrained=True)
+
     finetune_net = models.resnet50_v2(classes=task_num_class)
     model_name = 'resnet50_v2'
     finetune_net.features = pretrained_net.features
@@ -189,7 +190,7 @@ def train(pretrained_net, task, task_num_class):
     # Start Training
     for epoch in range(epochs):
         if (epoch+1) % 10 == 0:
-            trainer.set_learning_rate(lr*0.75)
+            trainer.set_learning_rate(trainer.learning_rate()*0.5)
         tic = time.time()
         train_loss = 0
         num_batch = len(train_data)
@@ -238,9 +239,22 @@ def train(pretrained_net, task, task_num_class):
 if __name__ == '__main__':
     net_dict = {}
     for task, task_num_class in task_list.items():
-        net_dict[task] = train(pretrained_net, task, task_num_class)
+        net_dict[task] = train(task, task_num_class)
 
-    logging.info('Training Finished. Starting prediction.\n')
+    logging.info('Training Finished. Starting Validation.\n')
+    # Validate All Network is Working
+
+    for task in task_list.keys():
+        val_data = gluon.data.DataLoader(
+            gluon.data.vision.ImageFolderDataset(
+                os.path.join('train_valid', task, 'val'),
+                transform=transform_val_normal),
+            batch_size=batch_size, shuffle=False, num_workers = 32)
+        val_acc, val_map, val_loss = test_normal(net_dict[task], val_data, ctx)
+        logging.info('[Validation for %s] Val-acc: %.3f, mAP: %.3f, loss: %.3f' % 
+            (task, val_acc, val_map, val_loss))
+
+    logging.info('Validation Finished. Starting Prediction.\n')
     f_out = open('submission.csv', 'w')
     with open('rank/Tests/question.csv', 'r') as f_in:
         lines = f_in.readlines()
