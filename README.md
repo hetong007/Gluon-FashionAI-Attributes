@@ -2,10 +2,13 @@
 
 This is the repo for [MXNet/Gluon](http://mxnet.incubator.apache.org/) benchmark scripts for the [FashionAI](https://tianchi.aliyun.com/competition/information.htm?spm=5176.100067.5678.2.505c3a26Oet3cf&raceId=231649) competition by Alibaba.
 
-1. Download and untar the data files into this folder, the structure should look like 
+1. Download and untar the data files into `data/` folder, the structure should look like 
 ```
 Gluon-FashionAI-Attributes
-├── data
+├── data/
+│   ├── base/
+│   ├── rank/
+│   └── web/
 ├── data.py
 ├── FashionAI-Attributes-Skirt.ipynb
 ├── main.py
