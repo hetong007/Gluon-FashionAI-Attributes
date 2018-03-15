@@ -5,8 +5,8 @@ import os, shutil, random
 # Read label.csv
 # For each task, make folders, and copy picture to corresponding folders
 
-label_dir = 'base/Annotations/label.csv'
-warmup_label_dir = 'web/Annotations/skirt_length_labels.csv'
+label_dir = 'data/base/Annotations/label.csv'
+warmup_label_dir = 'data/web/Annotations/skirt_length_labels.csv'
 
 label_dict = {'coat_length_labels': [],
               'lapel_design_labels': [],
@@ -29,28 +29,28 @@ with open(label_dir, 'r') as f:
     for path, task, label in tokens:
         label_dict[task].append((path, label))
 
-mkdir_if_not_exist(['train_valid'])
+mkdir_if_not_exist(['data/train_valid'])
 
 for task, path_label in label_dict.items():
-    mkdir_if_not_exist(['train_valid',  task])
+    mkdir_if_not_exist(['data/train_valid',  task])
     train_count = 0
     n = len(path_label)
     m = len(list(path_label[0][1]))
 
     for mm in range(m):
-        mkdir_if_not_exist(['train_valid', task, 'train', str(mm)])
-        mkdir_if_not_exist(['train_valid', task, 'val', str(mm)])
+        mkdir_if_not_exist(['data/train_valid', task, 'train', str(mm)])
+        mkdir_if_not_exist(['data/train_valid', task, 'val', str(mm)])
 
     random.shuffle(path_label)
     for path, label in path_label:
         label_index = list(label).index('y')
-        src_path = os.path.join('base', path)
+        src_path = os.path.join('data/base', path)
         if train_count < n * 0.9:
             shutil.copy(src_path,
-                        os.path.join('train_valid', task, 'train', str(label_index)))
+                        os.path.join('data/train_valid', task, 'train', str(label_index)))
         else:
             shutil.copy(src_path,
-                        os.path.join('train_valid', task, 'val', str(label_index)))
+                        os.path.join('data/train_valid', task, 'val', str(label_index)))
         train_count += 1
 
 # Add warmup data to skirt task
@@ -71,12 +71,12 @@ for task, path_label in label_dict.items():
     random.shuffle(path_label)
     for path, label in path_label:
         label_index = list(label).index('y')
-        src_path = os.path.join('web', path)
+        src_path = os.path.join('data/web', path)
         if train_count < n * 0.9:
             shutil.copy(src_path,
-                        os.path.join('train_valid', task, 'train', str(label_index)))
+                        os.path.join('data/train_valid', task, 'train', str(label_index)))
         else:
             shutil.copy(src_path,
-                        os.path.join('train_valid', task, 'val', str(label_index)))
+                        os.path.join('data/train_valid', task, 'val', str(label_index)))
         train_count += 1
 

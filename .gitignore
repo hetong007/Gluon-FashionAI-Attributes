@@ -1,8 +1,5 @@
-base
-rank
-web
-nohup.out
-training.log
-train_valid
-submission.csv
+*.out
+*.log
+*.csv
+data
 

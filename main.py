@@ -170,13 +170,13 @@ def train(task, task_num_class):
     # Define DataLoader
     train_data = gluon.data.DataLoader(
         gluon.data.vision.ImageFolderDataset(
-            os.path.join('train_valid', task, 'train'),
+            os.path.join('data/train_valid', task, 'train'),
             transform=transform_train),
         batch_size=batch_size, shuffle=True, num_workers=32, last_batch='discard')
 
     val_data = gluon.data.DataLoader(
         gluon.data.vision.ImageFolderDataset(
-            os.path.join('train_valid', task, 'val'),
+            os.path.join('data/train_valid', task, 'val'),
             transform=transform_val_normal),
         batch_size=batch_size, shuffle=False, num_workers = 32)
 
@@ -247,7 +247,7 @@ if __name__ == '__main__':
     for task in task_list.keys():
         val_data = gluon.data.DataLoader(
             gluon.data.vision.ImageFolderDataset(
-                os.path.join('train_valid', task, 'val'),
+                os.path.join('data/train_valid', task, 'val'),
                 transform=transform_val_normal),
             batch_size=batch_size, shuffle=False, num_workers = 32)
         val_acc, val_map, val_loss = test_normal(net_dict[task], val_data, ctx)
@@ -256,24 +256,23 @@ if __name__ == '__main__':
 
     logging.info('Validation Finished. Starting Prediction.\n')
     f_out = open('submission.csv', 'w')
-    with open('rank/Tests/question.csv', 'r') as f_in:
+    with open('data/rank/Tests/question.csv', 'r') as f_in:
         lines = f_in.readlines()
     tokens = [l.rstrip().split(',') for l in lines]
     n = len(tokens)
     cnt = 0
     for path, task, _ in tokens:
-        img_path = os.path.join('rank', path)
+        img_path = os.path.join('data/rank', path)
         with open(img_path, 'rb') as f:
             img = image.imdecode(f.read())
         data = transform_predict(img)
         out = net_dict[task](data.as_in_context(mx.gpu(0)))
         out = nd.SoftmaxActivation(out).mean(axis=0)
 
-        pred_out = ';'.join([str(o) for o in out.asnumpy().tolist()])
+        pred_out = ';'.join(["%.8f"%(o) for o in out.asnumpy().tolist()])
         line_out = ','.join([path, task, pred_out])
         f_out.write(line_out + '\n')
         cnt += 1
         progressbar(cnt, n)
     f_out.close()
-
 
