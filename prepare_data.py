@@ -30,6 +30,7 @@ with open(label_dir, 'r') as f:
         label_dict[task].append((path, label))
 
 mkdir_if_not_exist(['data/train_valid'])
+mkdir_if_not_exist(['submission'])
 
 for task, path_label in label_dict.items():
     mkdir_if_not_exist(['data/train_valid',  task])
