@@ -17,8 +17,8 @@ Gluon-FashionAI-Attributes
 ├── README.md
 └── train_task.py
 ```
-3. Execute `bash benchmark.sh` to prepare data, train and predict for all eight tasks.
-4. Compress and submit `submission/submission.csv` via the competition portal.
+2. Execute `bash benchmark.sh` to prepare data, train and predict for all eight tasks.
+3. Compress and submit `submission/submission.csv` via the competition portal.
 
 The script was tested on a [p3.8xlarge](https://aws.amazon.com/ec2/instance-types/p3/) EC2 instance from AWS. It costs around two and half hours.
 
