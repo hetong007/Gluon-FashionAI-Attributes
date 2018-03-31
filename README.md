@@ -29,3 +29,6 @@ Gluon-FashionAI-Attributes
   - `num_workers`，即用来处理数据的进程个数，建议设置为CPU核心个数。
 3. 运行`bash benchmark.sh`，这个脚本会自动准备数据，针对每个任务训练模型并预测，以及最后的合并预测。
 4. 运行结束后，将`submission/submission.csv`压缩成`zip`格式并通过官网左侧的“提交结果”标签页提交。
+
+[吐槽和讨论请点这里](https://discuss.gluon.ai/t/topic/5353)
+
