@@ -30,5 +30,26 @@ Gluon-FashionAI-Attributes
 3. 运行`bash benchmark.sh`，这个脚本会自动准备数据，针对每个任务训练模型并预测，以及最后的合并预测。
 4. 运行结束后，将`submission/submission.csv`压缩成`zip`格式并通过官网左侧的“提交结果”标签页提交。
 
+## 保存/读取模型文件
+
+在参加比赛时，选手们常常会训练多个模型，有时也需要保存模型留作以后使用。
+
+如果要保存模型，可以在训练过程中使用
+
+```python
+finetune_net.save_params('filename.params')
+```
+
+命令来实现。在读取时，可以通过
+
+```python
+net = gluon.model_zoo.vision.get_model(model_name)
+with net.name_scope():
+    net.output = nn.Dense(task_num_class)
+net.load_params('filename.params', ctx=mx.gpu())
+```
+
+来导入模型文件。
+
 [吐槽和讨论请点这里](https://discuss.gluon.ai/t/topic/5353)
 
