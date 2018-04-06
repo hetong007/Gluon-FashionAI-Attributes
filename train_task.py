@@ -126,10 +126,9 @@ def train():
     logging.info('Start Training for Task: %s\n' % (task))
 
     # Initialize the net with pretrained model
-    pretrained_net = gluon.model_zoo.vision.get_model(model_name, pretrained=True)
-
-    finetune_net = gluon.model_zoo.vision.get_model(model_name, classes=task_num_class)
-    finetune_net.features = pretrained_net.features
+    finetune_net = gluon.model_zoo.vision.get_model(model_name, pretrained=True)
+    with finetune_net.name_scope():
+        finetune_net.output = nn.Dense(task_num_class)
     finetune_net.output.initialize(init.Xavier(), ctx = ctx)
     finetune_net.collect_params().reset_ctx(ctx)
     finetune_net.hybridize()
